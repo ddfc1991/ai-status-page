@@ -1,0 +1,62 @@
+{
+  "refresh": 60,
+  "channels": [
+    {
+      "id": "longcat",
+      "name": "LongCat API",
+      "desc": "主推理通道 · 1M 上下文 · 带 reasoning",
+      "url": "https://api.longcat.chat/openai/v1/models",
+      "okCodes": [200, 401, 403],
+      "kind": "ai"
+    },
+    {
+      "id": "pollinations",
+      "name": "Pollinations",
+      "desc": "免费免 key 端点 · gpt-oss-20b",
+      "url": "https://text.pollinations.ai/openai/models",
+      "okCodes": [200],
+      "kind": "ai"
+    },
+    {
+      "id": "opencode",
+      "name": "opencode zen",
+      "desc": "9 个免费模型 · 有负载限流",
+      "url": "https://opencode.ai",
+      "okCodes": [200],
+      "kind": "ai"
+    },
+    {
+      "id": "uppcoder",
+      "name": "Uppcoder new-api",
+      "desc": "Spark 计划中转 · 公网",
+      "url": "https://a83ttbns-go-new-api.apps-2.uppcoder.com",
+      "okCodes": [200, 301, 302],
+      "kind": "ai"
+    },
+    {
+      "id": "sesame",
+      "name": "Sesame 云电脑",
+      "desc": "8核/15Gi 常驻 · tailnet 直连",
+      "url": "https://100.65.180.93:3000/api/status",
+      "okCodes": [200],
+      "kind": "node",
+      "note": "仅 tailnet 可达，公网检测常显示离线"
+    },
+    {
+      "id": "github",
+      "name": "GitHub",
+      "desc": "代码托管 / Actions / Codespaces",
+      "url": "https://github.com",
+      "okCodes": [200],
+      "kind": "infra"
+    },
+    {
+      "id": "render",
+      "name": "Render",
+      "desc": "本状态页宿主 · 免费 CDN",
+      "url": "https://render.com",
+      "okCodes": [200],
+      "kind": "infra"
+    }
+  ]
+}
