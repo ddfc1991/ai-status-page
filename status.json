@@ -23,7 +23,8 @@
       "desc": "9 个免费模型 · 有负载限流",
       "url": "https://opencode.ai",
       "okCodes": [200],
-      "kind": "ai"
+      "kind": "ai",
+      "note": "CORS 限制，经中转探测"
     },
     {
       "id": "uppcoder",

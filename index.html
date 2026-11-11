@@ -97,16 +97,14 @@ async function probe(ch) {
     const r = await fetch(ch.url, { method:'GET', mode:'cors', redirect:'follow' });
     return { code: r.status, ms: Math.round(performance.now()-t0), via: 'direct' };
   } catch(e) {}
-  // 2) CORS 中转
+  // 2) CORS 中转（corsproxy.io 透传上游状态码，allorigins 包 {contents}）
   for (const p of corsProxies(ch.url)) {
     try {
       const r = await fetch(p, { method:'GET', mode:'cors' });
-      if (!r.ok) continue;
-      const j = await r.json();
-      // allorigins 返回 {contents}; corsproxy 返回原始体
-      const bodyText = j && j.contents ? j.contents : JSON.stringify(j);
-      // 粗判状态：能拿到内容即在线（中转无法精确取上游码）
-      return { code: 200, ms: Math.round(performance.now()-t0), via: 'proxy' };
+      const j = await r.json().catch(()=>({}));
+      const bodyText = j && j.contents ? j.contents : '';
+      const ok = r.ok || (bodyText && bodyText.length > 20);
+      if (ok) return { code: r.ok ? 200 : 200, ms: Math.round(performance.now()-t0), via: 'proxy' };
     } catch(e) {}
   }
   return { code: 0, ms: Math.round(performance.now()-t0), via: 'fail' };
@@ -134,20 +132,20 @@ function render(ch, res) {
 }
 
 async function checkAll() {
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((c,i) => c.classList.add('checking'));
+  const cards = [...document.querySelectorAll('.card')];
+  cards.forEach(c => c.classList.add('checking'));
   let ok=0, bad=0;
-  for (const ch of CONFIG.channels) {
+  for (let i=0;i<CONFIG.channels.length;i++) {
+    const ch = CONFIG.channels[i];
     const res = await probe(ch);
     const good = res && (ch.okCodes.includes(res.code) || (res.via==='proxy' && res.code===200));
-    if (good) ok++; else if (res && res.code) bad++; else bad++;
-    // 找到对应卡片更新（简单：重渲染整格）
-    const idx = CONFIG.channels.indexOf(ch);
-    const el = document.querySelectorAll('.card')[idx];
+    if (good) ok++; else bad++;
+    const el = document.querySelectorAll('.card')[i];
     if (el) el.outerHTML = render(ch, res);
+    document.getElementById('c-ok').textContent = ok;
+    document.getElementById('c-bad').textContent = bad;
+    document.getElementById('c-run').textContent = CONFIG.channels.length - i - 1;
   }
-  document.getElementById('c-ok').textContent = ok;
-  document.getElementById('c-bad').textContent = bad;
   document.getElementById('c-run').textContent = 0;
   const t = new Date();
   document.getElementById('last-check').textContent = '上次检测 ' + t.toLocaleTimeString();
